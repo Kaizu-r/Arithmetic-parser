@@ -1,6 +1,7 @@
 #include<stdio.h>
 
-void removeSpace(char* str){
+void removeSpace(char* str)
+{
     char* str2 = str;
     do{
         while(*str2 == ' ')
@@ -9,7 +10,8 @@ void removeSpace(char* str){
     str = '\0';
 }
 
-void tokenize(int* arr, char* str){ //push an int to arr depending on the symbol
+int tokenize(int* arr, char* str)
+{     //push an int to arr depending on the symbol
     int i = 0;
     while(str[i] != '\0'){
         switch(str[i]){
@@ -39,8 +41,34 @@ void tokenize(int* arr, char* str){ //push an int to arr depending on the symbol
                 break;
             default:
                 arr[i] = 0; //for error
+                return 1;   //error
             
         }
         i++;
     }
+    arr[++i] = -1;  //terminating 
+    return 0;
 }
+
+void toTerminal(char* str, int* arr)    //converts per char token to terminal string
+{
+    int i = 0, j = 0; 
+    while(arr[i] != -1)
+    {
+        if(arr[i] == 4) //digit
+        {
+            do{} while(arr[i++] == 4 && arr[i] != -1);
+            str[j] = 'a';
+        }
+        if(arr[i] == 1)
+            str[j] = 'b';
+        if(arr[i] == 2)
+            str[j] = 'c';
+        if(arr[i] == 3){
+            str[j]  == 'd';
+        }
+        i++, j++;
+    }
+    str[j] = 'e';   //end
+}
+
