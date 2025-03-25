@@ -118,26 +118,20 @@ int tokenize(char* str, Token* arr)
 
 }
 
-
-
 //checks balanced parenthesis
-int isBalanced(char* str){
+int isBalanced(Token* t)
+{
     int top = 0, i = 0;
-    char stack[strlen(str)];
-
-    while(i++ < strlen(str)){
-        if(str[i] == 'c')
-        {
-            stack[top++] = 'c'; 
-        }
-        else if(str[i] == 'd')
-            top--;
-    }
-    if(!(top))  //top = 0
+    while(t[i].token != END)
     {
-        return 1;
+        if(t[i].token == LEFT_P)
+            top++;  
+        else if(t[i].token == RIGHT_P && top != 0 )   //means there must already be LEFT_P
+            top--;
+        i++;
     }
+    if(!top)    //balanced
+        return 1;
     return 0;
-
-
+    
 }
