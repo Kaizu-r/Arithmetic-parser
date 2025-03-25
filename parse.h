@@ -10,8 +10,13 @@ typedef enum tok{
     LEFT_P,
     RIGHT_P,
     
-}Token;
+}Token_t;
 
+typedef struct {
+    Token_t token;
+    int start;  //starting index in string
+    int end;    //ending index in string
+}Token;
 
 void removeSpace(char* str)
 {
@@ -21,6 +26,12 @@ void removeSpace(char* str)
             str2++;
     }while(*str++ = *str2++);
     str = '\0';
+}
+
+void tokenize(char* str, Token* arr)
+{
+    int i = 0;
+    
 }
 
 
