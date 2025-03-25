@@ -122,16 +122,15 @@ int tokenize(char* str, Token* arr)
 int isBalanced(Token* t)
 {
     int top = 0, i = 0;
-    while(t[i].token != END)
+    while(t[i].token != END && top >= 0)
     {
         if(t[i].token == LEFT_P)
             top++;  
-        else if(t[i].token == RIGHT_P && top != 0 )   //means there must already be LEFT_P
+        else if(t[i].token == RIGHT_P)   //means there must already be LEFT_P
             top--;
         i++;
     }
     if(!top)    //balanced
         return 1;
-    return 0;
-    
+    return 0; 
 }
