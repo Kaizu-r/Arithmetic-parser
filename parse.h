@@ -1,5 +1,18 @@
 #include<stdio.h>
 
+typedef enum tok{
+    DIGIT,
+    ADD,
+    SUBTRACT,
+    DIVIDE,
+    MULTIPLY,
+    MOD,
+    LEFT_P,
+    RIGHT_P,
+    
+}Token;
+
+
 void removeSpace(char* str)
 {
     char* str2 = str;
@@ -13,15 +26,17 @@ void removeSpace(char* str)
 int tokenize(int* arr, char* str)
 {     //push an int to arr depending on the symbol
     int i = 0;
-    while(str[i] != '\0'){
+    while(str[i] != EOF){
         switch(str[i]){
             case '+':
             case '-':
             case '/':
             case '*':
+                printf("0");
                 arr[i] = 1;
                 break;
             case '(':
+                printf("0");
                 arr[i] = 2;
                 break;
             case ')':
@@ -37,16 +52,16 @@ int tokenize(int* arr, char* str)
             case'8':
             case'9':
             case'0':
+                printf("0");
                 arr[i] = 4;
                 break;
-            default:
-                arr[i] = 0; //for error
-                return 1;   //error
+            case ' ':
+                break;
             
         }
         i++;
     }
-    arr[++i] = -1;  //terminating 
+    printf("2");
     return 0;
 }
 
@@ -61,14 +76,35 @@ void toTerminal(char* str, int* arr)    //converts per char token to terminal st
             str[j] = 'a';
         }
         if(arr[i] == 1)
-            str[j] = 'b';
+            str[j] = 'b';   //operatr
         if(arr[i] == 2)
-            str[j] = 'c';
+            str[j] = 'c';   //open parenthesis
         if(arr[i] == 3){
-            str[j]  == 'd';
+            str[j]  == 'd'; //close parenthesis
         }
         i++, j++;
     }
-    str[j] = 'e';   //end
+    str[j] = '\0';   //end
 }
 
+//checks balanced parenthesis
+int isBalanced(char* str){
+    int top = 0, i = 0;
+    char stack[strlen(str)];
+
+    while(i++ < strlen(str)){
+        if(str[i] == 'c')
+        {
+            stack[top++] = 'c'; 
+        }
+        else if(str[i] == 'd')
+            top--;
+    }
+    if(!(top))  //top = 0
+    {
+        return 1;
+    }
+    return 0;
+
+
+}
