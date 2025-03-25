@@ -37,6 +37,18 @@ int isDigit(char c) //chewck if digit
     return 0;
 }
 
+int isOperator(char c){
+    switch(c){
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+            return 1;
+    }
+    return 0;
+}
+
 
 void removeSpace(char* str)
 {
@@ -50,10 +62,17 @@ void removeSpace(char* str)
 
 void tokenize(char* str, Token* arr)
 {
-    int i = 0;
-    while(str[i] != EOF)    //read string, tokenize
+    int i = 0, j= 0;
+    while(str[i++] != EOF)    //read string, tokenize
     {
-        if(str[i] )
+        if(isDigit(str[i]))
+        {
+            arr[j].token = DIGIT;
+            arr[j].start = i;
+            while(isDigit(str[++i]) && str[i] != EOF);
+            arr[j].end = i -1;
+        }
+        
     }
 }
 
