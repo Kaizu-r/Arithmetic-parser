@@ -18,6 +18,26 @@ typedef struct {
     int end;    //ending index in string
 }Token;
 
+int isDigit(char c) //chewck if digit
+{
+    switch(c)
+    {
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '0':
+            return 1;
+    }
+    return 0;
+}
+
+
 void removeSpace(char* str)
 {
     char* str2 = str;
@@ -31,7 +51,10 @@ void removeSpace(char* str)
 void tokenize(char* str, Token* arr)
 {
     int i = 0;
-    
+    while(str[i] != EOF)    //read string, tokenize
+    {
+        if(str[i] )
+    }
 }
 
 
