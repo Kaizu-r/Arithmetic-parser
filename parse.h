@@ -2,6 +2,7 @@
 
 typedef enum tok{
     DIGIT,
+    FLOAT,
     ADD,
     SUBTRACT,
     DIVIDE,
@@ -76,6 +77,14 @@ int tokenize(char* str, Token* arr)
             arr[j++].end = i;
             
         }
+        else if(str[i] == '.')   //float
+        {
+            arr[j].token = FLOAT;
+            arr[j].start = i;
+            while(isDigit(str[i+1]) && str[i+1] != EOF) 
+                i++;
+            arr[j++].end = i;
+        }
         else if(isOperator(str[i]))
         {
             arr[j].start = i;
@@ -146,3 +155,4 @@ int toInt(char* str, Token t, int curr)
     digit = ((int) str[curr]) - 48; //30 is ascii for 0
     return digit*factor + toInt(str, t, curr+1);
 }
+
