@@ -9,6 +9,7 @@ typedef enum tok{
     MOD,
     LEFT_P,
     RIGHT_P,
+    END
     
 }Token_t;
 
@@ -57,23 +58,64 @@ void removeSpace(char* str)
         while(*str2 == ' ')
             str2++;
     }while(*str++ = *str2++);
-    str = '\0';
+    *str = '\0';
 }
 
-void tokenize(char* str, Token* arr)
+int tokenize(char* str, Token* arr)
 {
     int i = 0, j= 0;
-    while(str[i++] != EOF)    //read string, tokenize
+    while(str[i] != '\0')    //read string, tokenize
     {
+
         if(isDigit(str[i]))
         {
             arr[j].token = DIGIT;
             arr[j].start = i;
-            while(isDigit(str[++i]) && str[i] != EOF);
-            arr[j].end = i -1;
+            while(isDigit(str[i+1]) && str[i+1] != EOF) 
+                i++;
+            arr[j++].end = i;
+            
         }
-        
+        else if(isOperator(str[i]))
+        {
+            arr[j].start = i;
+            arr[j].end = i;
+            switch(str[i])
+            {
+                case '+': arr[j].token = ADD; break;
+                case '-': arr[j].token = SUBTRACT; break;
+                case '*': arr[j].token = MULTIPLY; break;
+                case '/': arr[j].token = DIVIDE; break;
+                case '%': arr[j].token = MOD; break;
+            }
+            j++;
+        }
+        else if(str[i] == '(')
+        {
+            arr[j].start = i;
+            arr[j].end = i;
+            arr[j++].token = LEFT_P;
+        }
+        else if(str[i] == ')')
+        {
+            arr[j].start = i;
+            arr[j].end = i;
+            arr[j++].token = RIGHT_P;
+        }
+        else if(str[i] == '\0' || str[i] == '\n')
+        {
+            arr[j].start = i;
+            arr[j].end = i;
+            arr[j++].token = END;
+            return 0;
+        }
+        else    //not in language
+        {
+            return 1;   
+        }
+        i++;
     }
+
 }
 
 
