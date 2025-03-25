@@ -134,3 +134,15 @@ int isBalanced(Token* t)
         return 1;
     return 0; 
 }
+
+int toInt(char* str, Token t, int curr)
+{
+    int factor = 1;
+    int i, digit;
+    if(curr > t.end)
+        return 0;
+    for(i = 0; i < t.end - curr; i++, factor*=10);
+    
+    digit = ((int) str[curr]) - 48; //30 is ascii for 0
+    return digit*factor + toInt(str, t, curr+1);
+}
