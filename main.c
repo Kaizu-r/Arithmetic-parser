@@ -16,13 +16,9 @@ int main()
     Token t[100];
     if(tokenize(str, t))
         printf("FAILED\n");
-
-    int j = 0;
-    while(t[j].token != END){
-        printf("%d ", t[j].token);
-        j++;
-    }
-    printf("%d ", t[j].token);
+    printf("x\n");
+    if(isBalanced(t))
+        printf("BALANCED\n");
 
     return 0;
 }
