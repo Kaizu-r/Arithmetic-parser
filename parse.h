@@ -164,7 +164,7 @@ float toFloat(char* str, Token t, int curr)
         return 0;
     if(str[curr] == '.')
         curr++;
-    for(i = 0; i < t.end - curr; i++, factor /= 10);
+    for(i = 0; i <= t.end - curr; i++, factor /= 10);
 
     digit = ((int) str[curr]) - 48;
     return digit*factor + toFloat(str, t, curr+1);
@@ -186,6 +186,11 @@ void toRPN(char* str, float* numbers, Token_t* queue, Token* t,  int* rear)   //
                 numbers[j-1] += toFloat(str, t[++i], t[i].start);   //add floating point part to that index
             }
             queue[++(*rear)] = DIGIT;   //store to output queue
+        }
+        else if(t[i].token == FLOAT)
+        {
+            numbers[j++] = toFloat(str, t[i], t[i].start);
+            queue[++(*rear)] = DIGIT;
         }
         else if(t[i].token == ADD || t[i].token == SUBTRACT || t[i].token == MULTIPLY || t[i].token == DIVIDE)
         {
