@@ -169,3 +169,47 @@ float toFloat(char* str, Token t, int curr)
     digit = ((int) str[curr]) - 48;
     return digit*factor + toFloat(str, t, curr+1);
 }
+
+//shunting yard
+void toRPN(char* str, float* numbers, Token_t* queue, Token* t,  int* rear)   //turns to RPN and uses array of float to check each num
+{
+    int i = 0, j = 0;
+    int top = -1;
+    Token_t stack[100];
+    while(t[i].token != END)
+    {
+        if(t[i].token == DIGIT)
+        {
+            numbers[(j++)] = toInt(str, t[i], t[i].start);  //store to number collection
+            if(t[i+1].token == FLOAT)
+            {
+                numbers[j-1] += toFloat(str, t[++i], t[i].start);   //add floating point part to that index
+            }
+            queue[++(*rear)] = DIGIT;   //store to output queue
+        }
+        else if(t[i].token == ADD || t[i].token == SUBTRACT)
+        {
+            while(top >= 0 && stack[top] != LEFT_P && (stack[top] >= t[i].token ))
+            {
+                queue[++(*rear)] = stack[top--]; //pop from stack then push to output queue
+            }
+            stack[++top] = t[i].token;   //push to stack
+        }
+        else if(t[i].token == LEFT_P)
+        {
+            stack[++top] = LEFT_P;  //push left_p to stack
+        }
+        else if(t[i].token == RIGHT_P)
+        {
+            while(top != -1 && stack[top] != LEFT_P)
+            {
+                queue[++(*rear)] = stack[top--];
+            }
+            if(top != -1)
+                top--;   //remove left_p 
+        }
+        i++;
+    }
+    while(top != -1)
+        queue[++(*rear)] = stack[top--]; //pop remaining operators into queue
+}
