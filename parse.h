@@ -187,7 +187,7 @@ void toRPN(char* str, float* numbers, Token_t* queue, Token* t,  int* rear)   //
             }
             queue[++(*rear)] = DIGIT;   //store to output queue
         }
-        else if(t[i].token == ADD || t[i].token == SUBTRACT)
+        else if(t[i].token == ADD || t[i].token == SUBTRACT || t[i].token == MULTIPLY || t[i].token == DIVIDE)
         {
             while(top >= 0 && stack[top] != LEFT_P && (stack[top] >= t[i].token ))
             {
@@ -212,4 +212,40 @@ void toRPN(char* str, float* numbers, Token_t* queue, Token* t,  int* rear)   //
     }
     while(top != -1)
         queue[++(*rear)] = stack[top--]; //pop remaining operators into queue
+}
+
+float solve(float* numbers, Token_t* queue, int rear)
+{
+
+    float stack[100];
+    int top = -1;
+    int i = 0, j = 0;
+
+    while(i <= rear)
+    {
+        if(queue[i] == DIGIT)
+            stack[++top] = numbers[j++];
+        else    //found operator
+        {
+            switch(queue[i])
+            {
+                case ADD:
+                    stack[top - 1] = stack[top - 1] + stack[top];    //store sum of two nums to top - 1
+                    break;
+                case SUBTRACT:
+                    stack[top - 1]= stack[top - 1] - stack[top];    //store sum of two nums to top - 1
+                    break;
+                case DIVIDE:
+                    stack[top - 1]= stack[top - 1] / stack[top];    //store sum of two nums to top - 1
+                    break;
+                case MULTIPLY:
+                    stack[top - 1]= stack[top - 1] * stack[top];    //store sum of two nums to top - 1
+                    break;
+            }
+            top--;
+        }
+        i++;
+    }
+
+    return stack[0];
 }
