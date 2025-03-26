@@ -1,0 +1,16 @@
+Arithmetic Parser that accepts a string in the form of an arithmetic expression, checks its validity and evaluates its
+
+Features
+    Basic Arithmetic
+    Balanced Parenthesis checker
+    Double negative (tba)
+    Power(tba)
+    Trigonometric functions (tba)
+
+Step by Step Process
+    1. Read a string
+    2. Remove spaces in the string
+    3. Tokenize the string and store array of tokens
+    4. Convert array of tokens to reverse polish notation using Shunting Yard Algorithm, and store that notation to a queue
+        if a token DIGIT or FLOAT is found, store the associate number to an array of floats
+    5. Evaluate reverse polish notation
