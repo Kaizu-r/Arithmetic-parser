@@ -17,10 +17,8 @@ typedef enum tok{
     LEFT_P,
     RIGHT_P,
     ARITH,
-    FUNC,
     TERM,
     FACTOR,
-    FUNCTION,
     END
     
 }Token_t;
@@ -138,6 +136,16 @@ int tokenize(char* str, Token* arr)
         i++;
     }
 
+}
+
+float power(float num, float pow)
+{
+    if(pow > 0 )
+        return num * power(num, pow - 1);
+    else if (pow < 0)
+        return (1/num) * power(num, pow + 1);
+    else
+        return 1;
 }
 
 //checks balanced parenthesis
@@ -288,7 +296,9 @@ float solve(float* numbers, Token_t* queue, int rear)
                 case MOD:
                     stack[top - 1] =(int) stack[top-1] % (int) stack[top];
                     break;
-                //add pow
+                case POW:
+                    stack[top - 1] = power(stack[top - 1], stack[top]);
+                    break;
                     
             }
             top--;
