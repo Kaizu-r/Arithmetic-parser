@@ -10,15 +10,8 @@ typedef enum tok{
     MULTIPLY,
     MOD,
     POW,
-    SIN,
-    COS,
-    TAN,
-    MAX,
     LEFT_P,
     RIGHT_P,
-    ARITH,
-    TERM,
-    FACTOR,
     END
     
 }Token_t;
@@ -28,6 +21,9 @@ typedef struct {
     int start;  //starting index in string
     int end;    //ending index in string
 }Token;
+
+int arithParse(Token_t* t);    //crumbs
+
 
 int isDigit(char c) //chewck if digit
 {
@@ -308,3 +304,120 @@ float solve(float* numbers, Token_t* queue, int rear)
 
     return stack[0];
 }
+
+
+int digitParse(Token_t* t){
+    printf("DIGIT PARSE\n");
+    if(*t == FLOAT){
+        printf("FLOAT");
+        t++;
+        return 1;
+    }
+    if(*t == DIGIT){
+        printf("DIGIT ");
+        t++;
+        if(*t == FLOAT){
+            printf("FLOAT ");
+            t++;
+        }
+        return 1;
+    }
+    return 0;
+    
+}
+
+int factorPostParse(Token_t *t){
+    printf("FACTOR PARSE\n");
+    if(*t == POW ){
+        printf("POW ");
+        t++;
+        if(digitParse(t)){
+            if(factorPostParse(t))
+                return 1;
+        }
+        return 0;
+    }
+    return 1;
+}
+
+int factorParse(Token_t *t){
+    printf("FACTOR\n");
+    if(*t == DIGIT || *t == FLOAT){
+        if(digitParse(t)){
+            if(factorPostParse(t))
+                return 1;
+            else
+                return 0;
+        }
+        else
+            return 0;
+    }
+    else if(*t == SUBTRACT){
+        if(digitParse(++t)){
+            if(factorPostParse(t))
+                return 1;
+        }
+        return 0;
+    }
+    printf("LEFT_P ");
+    if(arithParse(++t)){
+        if(*t == RIGHT_P){
+            printf("RIGHT_P ");
+            t++;
+            return 1;
+        }
+    }
+    return 0;
+    
+}
+int termPostParse(Token_t *t){
+    printf("TERM POST\n");
+    if(*t == MULTIPLY || *t == DIVIDE){
+        printf(((*t == MULTIPLY) ? "MULTIPLY " : "DIVIDE "));
+        if(factorParse(++t)){
+            if(termPostParse(t))
+                return 1;
+        }
+        return 0;
+    }
+    return 1;
+}
+
+int termParse(Token_t *t){
+    printf("TERM\n");
+    if(factorParse(t)){
+        if(termPostParse(++t))
+            return 1;
+    }
+    return 0;
+}
+
+int arithPostParse(Token_t *t){
+    printf("ARITH POST\n");
+    if(*t == SUBTRACT || *t == ADD){
+        printf(((*t == SUBTRACT) ? "SUBTRACT " : "ADD "));
+    
+        if(termParse(++t)){
+            if(arithPostParse(t))
+                return 1;
+        }
+        return 0;
+    }
+    return 1;
+}
+
+int arithParse(Token_t *t){
+    printf("ARITH\n");
+    if(termParse(t)){
+       if(arithPostParse(++t))
+            return 1;
+    }
+    return 0;
+}
+
+int validate(Token_t *t){
+    if(arithParse(t))
+        return 1;
+    return 0;
+}
+
