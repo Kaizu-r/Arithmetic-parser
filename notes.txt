@@ -14,3 +14,20 @@ Step by Step Process
     4. Convert array of tokens to reverse polish notation using Shunting Yard Algorithm, and store that notation to a queue
         if a token DIGIT or FLOAT is found, store the associate number to an array of floats
     5. Evaluate reverse polish notation
+
+PRODUCTION RULES
+
+arith = term arith_post
+arith_post = + term arith_post | - term arith_post | e
+term = factor term_post
+term_post = * factor term_post | / factor term_post | e
+factor = DIGIT factor_post | (arith) | - DIGIT factor_post |func(arith)
+factor_post = ^ DIGIT factor_post | e
+DIGIT = num FLOAT 
+FLOAT = .num | e
+
+Recognition steps
+    1. store tokens to token array
+    2. find last index of token arra
+    3. start at the last index of token array moving down
+    4. if token at index is RIGHT_P, recursively call the function up to index of LEFT_P

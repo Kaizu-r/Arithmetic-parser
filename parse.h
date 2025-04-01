@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<math.h>
 
 
 typedef enum tok{
@@ -12,6 +13,15 @@ typedef enum tok{
     POW,
     LEFT_P,
     RIGHT_P,
+    SIN,
+    COS,
+    TAN,
+    SEC,
+    CSC,
+    COT,
+    LOG,
+    FLR,
+    CEI,
     END
     
 }Token_t;
@@ -23,6 +33,7 @@ typedef struct {
 }Token;
 
 int arithParse(Token_t* t);    //crumbs
+void printToken(Token_t t);
 
 
 int isDigit(char c) //chewck if digit
@@ -68,6 +79,91 @@ void removeSpace(char* str)
     *str = '\0';
 }
 
+int isTokenFunction(Token_t t)
+{
+    switch(t){
+        case SIN:
+        case COS:
+        case TAN:
+        case CSC:
+        case COT:
+        case SEC:
+        case CEI:
+        case FLR:
+        case LOG:
+            return 1;
+    }
+    return 0;
+}
+
+int isStringFunction(char* str){
+    switch(*str){
+        case 's':
+            if(*(str+1) == 'i' && *(str+2) == 'n')
+                return 1;
+            if(*(str+1) == 'e' && *(str+2) == 'c')
+                return 1;
+            break;
+        case 'c':
+            if(*(str+1) == 's' && *(str+2) == 'c')
+                return 1;
+            if(*(str+1) == 'o' && *(str+2) == 's')
+                return 1;
+            if(*(str+1) == 'o' && *(str+2) == 't')
+                return 1;
+            if(*(str+1) == 'e' && *(str+2) == 'i')
+                return 1;
+            break;
+        case 'f':
+            if(*(str+1) == 'l' && *(str+2) == 'r')
+                return 1;
+            break;
+        case 't':
+            if(*(str+1) == 'a' && *(str+2) == 'n')
+                return 1;
+            break;
+        case 'l':
+            if(*(str+1) == 'o' && *(str+2) == 'g')
+                return 1;
+            break;
+    }
+    return 0;
+}
+
+Token_t checkStringFunction(char* str){
+    switch(*str){
+        case 's':
+            if(*(str+1) == 'i' && *(str+2) == 'n')
+                return SIN;
+            if(*(str+1) == 'e' && *(str+2) == 'c')
+                return SEC;
+            break;
+        case 'c':
+            if(*(str+1) == 's' && *(str+2) == 'c')
+                return CSC;
+            if(*(str+1) == 'o' && *(str+2) == 's')
+                return COS;
+            if(*(str+1) == 'o' && *(str+2) == 't')
+                return COT;
+            if(*(str+1) == 'e' && *(str+2) == 'i')
+                return CEI;
+            break;
+        case 'f':
+            if(*(str+1) == 'l' && *(str+2) == 'r')
+                return FLR;
+            break;
+        case 't':
+            if(*(str+1) == 'a' && *(str+2) == 'n')
+                return TAN;
+            break;
+        case 'l':
+            if(*(str+1) == 'o' && *(str+2) == 'g')
+                return LOG;
+            break;
+    }
+    return 0;
+}
+
 int tokenize(char* str, Token* arr)
 {
     int i = 0, j= 0;
@@ -104,6 +200,13 @@ int tokenize(char* str, Token* arr)
                 case '%': arr[j].token = MOD; break;
                 case '^': arr[j].token = POW; break;
             }
+            j++;
+        }
+        else if(isStringFunction(&str[i])){
+            arr[j].token = checkStringFunction(&str[i]);
+            arr[j].start = i;
+            arr[j].end = i+2;
+            i+=2;
             j++;
         }
         else if(str[i] == '(')
@@ -229,7 +332,10 @@ void toRPN(char* str, float* numbers, Token_t* queue, Token* t,  int* rear)   //
             negative = 1;
             queue[++(*rear)] = DIGIT;
         }
-        else if(t[i].token == ADD || t[i].token == SUBTRACT || t[i].token == MULTIPLY || t[i].token == DIVIDE || t[i].token == POW)
+        else if(isTokenFunction(t[i].token)){
+            stack[++top] = t[i].token;
+        }
+        else if(t[i].token == ADD || t[i].token == SUBTRACT || t[i].token == MULTIPLY || t[i].token == DIVIDE || t[i].token == POW || t[i].token == MOD)
         {
             if(t[i].token == SUBTRACT && *rear > -1 && (t[i-1].token != FLOAT && t[i-1].token != DIGIT)) //check if prev symbol is not a num
             {
@@ -295,6 +401,35 @@ float solve(float* numbers, Token_t* queue, int rear)
                 case POW:
                     stack[top - 1] = power(stack[top - 1], stack[top]);
                     break;
+                case SIN:
+                    stack[top] = sin(stack[top]);
+                    break;
+                case COS:
+                    stack[top] = cos(stack[top]);
+                    break;
+                case TAN:
+                    stack[top] = tan(stack[top]);
+                    break;
+                case SEC:
+                    stack[top] = 1/cos(stack[top]);
+                    break;
+                case CSC:
+                    stack[top] = 1/sin(stack[top]);
+                    break;
+                case COT:
+                    stack[top] = 1/tan(stack[top]);
+                    break;
+                case LOG:
+                    stack[top] = log(stack[top]);
+                    break;
+                case FLR:
+                    stack[top] = floor(stack[top]);
+                    break;
+                case CEI:
+                    stack[top] = ceil(stack[top]);
+                    break;
+                
+
                     
             }
             top--;
@@ -337,6 +472,8 @@ int factorPostParse(Token_t *t){
         }
         return 0;
     }
+    
+    
     return 1;
 }
 
@@ -346,25 +483,35 @@ int factorParse(Token_t *t){
         if(digitParse(t)){
             if(factorPostParse(t))
                 return 1;
-            else
-                return 0;
         }
-        else
-            return 0;
     }
     else if(*t == SUBTRACT){
         if(digitParse(++t)){
             if(factorPostParse(t))
                 return 1;
         }
-        return 0;
     }
-    printf("LEFT_P ");
-    if(arithParse(++t)){
-        if(*t == RIGHT_P){
-            printf("RIGHT_P ");
-            t++;
-            return 1;
+    else if(isTokenFunction(*t)){
+        printToken(*t);
+        if(*(++t) == LEFT_P)
+        {
+            if(arithParse(++t)){
+                if(*(++t) == RIGHT_P){
+                    printf("RIGHT_P");
+                    t++;
+                    return 1;
+                }
+            }
+        }
+    }
+    else if(*t == LEFT_P){
+        printf("LEFT_P ");
+        if(arithParse(++t)){
+            if(*(++t) == RIGHT_P){
+                printf("RIGHT_P ");
+                t++;
+                return 1;
+            }
         }
     }
     return 0;
@@ -421,3 +568,70 @@ int validate(Token_t *t){
     return 0;
 }
 
+void printToken(Token_t t){
+    switch(t)
+    {
+        case DIGIT:
+            printf("DIGIT ");
+            break;
+        case FLOAT:
+            printf("FLOAT ");
+            break;
+        case ADD:
+            printf("ADD ");
+            break;
+        case SUBTRACT:
+            printf("SUBTRACT ");
+            break;
+        case MULTIPLY:
+            printf("MULTIPLY ");
+            break;
+        case DIVIDE:
+            printf("DIVIDE ");
+            break;
+        case POW:
+            printf("POW ");
+            break;
+        case MOD:
+            printf("MOD ");
+            break;
+        case LEFT_P:
+            printf("LEFT_P ");
+            break;
+        case RIGHT_P:
+            printf("RIGHT_P ");
+            break;
+        case SIN:
+            printf("SIN ");
+            break;
+        case COS:
+            printf("COS ");
+            break;
+        case CSC:
+            printf("CSC ");
+            break;
+        case TAN:
+            printf("TAN ");
+            break;
+        case SEC:
+            printf("SEC ");
+            break;
+        case COT:
+            printf("COT ");
+            break;
+        case LOG:
+            printf("LOG ");
+            break;
+        case FLR:
+            printf("FLR ");
+            break;
+        case CEI:
+            printf("CEI ");
+            break;
+        case END:
+            printf("END ");
+            break;
+        default:
+            printf("ERR ");
+    }
+}

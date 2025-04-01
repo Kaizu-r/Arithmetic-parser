@@ -16,9 +16,32 @@ int main()
     
     if(tokenize(str, t))
         printf("FAILED\n");
+
     if(isBalanced(t))
         printf("BALANCED\n");
    
+    Token_t arr[100];
+    int l = 0;
+    Token *k = t;
+    while(k->token != END){
+        arr[l++] = k++->token;
+    }
+    arr[l] = END;
+    
+    for(l = 0; arr[l] != END; l++){
+        printToken(arr[l]);
+    }
+
+
+
+
+    if(!validate(arr)){
+        printf("\n String not Valid\n");
+        return 0;
+    }
+
+
+
     toRPN(str, numbers, queue, t, &rear);
 
     for(int i = 0, j = 0; i <= rear; i++)
@@ -33,8 +56,10 @@ int main()
             printf("* ");
         else if(queue[i] == DIVIDE)
             printf("/ ");
-        else
-            printf("e ");
+        else if (queue[i] == POW)
+            printf("^ ");
+        else if (queue[i] == MOD)
+            printf("%% ");
     }
 
     float answer = solve(numbers, queue, rear);
