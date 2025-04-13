@@ -135,9 +135,11 @@ int solve(float* res, float* numbers, Token_t* queue, int rear, error *e)
             {
                 case ADD:
                     stack[top - 1] = stack[top - 1] + stack[top];    //store sum of two nums to top - 1
+                    top--;
                     break;
                 case SUBTRACT:
                     stack[top - 1]= stack[top - 1] - stack[top];    //store sum of two nums to top - 1
+                    top--;
                     break;
                 case DIVIDE:
                     if(stack[top] == 0){
@@ -145,9 +147,11 @@ int solve(float* res, float* numbers, Token_t* queue, int rear, error *e)
                         return 1;
                     }
                     stack[top - 1]= stack[top - 1] / stack[top];    //store sum of two nums to top - 1
+                    top--;
                     break;
                 case MULTIPLY:
                     stack[top - 1]= stack[top - 1] * stack[top];    //store sum of two nums to top - 1
+                    top--;
                     break;
                 case MOD:
                     if(stack[top] == 0){
@@ -155,9 +159,11 @@ int solve(float* res, float* numbers, Token_t* queue, int rear, error *e)
                         return 1;
                     }
                     stack[top - 1] =(int) stack[top-1] % (int) stack[top];
+                    top--;
                     break;
                 case POW:
                     stack[top - 1] = power(stack[top - 1], stack[top]);
+                    top--;
                     break;
                 case SIN:
                     stack[top] = sin(stack[top]);
@@ -191,7 +197,6 @@ int solve(float* res, float* numbers, Token_t* queue, int rear, error *e)
                     stack[top] = ceil(stack[top]);
                     break;
             }
-            top--;
         }
         i++;
     }
