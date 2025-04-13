@@ -34,7 +34,14 @@ typedef struct {
     int end;    //ending index in string
 }Token;
 
-int arithParse(Token_t* t);    //crumbs
+int arithParse(Token_t** t);    //crumbs
+int digitParse(Token_t** t);
+int factorPostParse(Token_t **t);
+int factorParse(Token_t **t);
+int termPostParse(Token_t **t);
+int termParse(Token_t **t);
+int arithPostParse(Token_t **t);
+int arithParse(Token_t **t);
 void printToken(Token_t t);
 
 
@@ -263,19 +270,19 @@ int isBalanced(Token* t, error* e)
 
 
 
-int digitParse(Token_t* t){
+int digitParse(Token_t** t){
     printf("DIGIT PARSE\n");
-    if(*t == FLOAT){
+    if(**t == FLOAT){
         printf("FLOAT");
-        t++;
+        (*t)++;
         return 1;
     }
-    if(*t == DIGIT){
+    if(**t == DIGIT){
         printf("DIGIT ");
-        t++;
-        if(*t == FLOAT){
+        (*t)++;
+        if(**t == FLOAT){
             printf("FLOAT ");
-            t++;
+            (*t)++;
         }
         return 1;
     }
@@ -283,11 +290,11 @@ int digitParse(Token_t* t){
     
 }
 
-int factorPostParse(Token_t *t){
+int factorPostParse(Token_t **t){
     printf("FACTOR PARSE\n");
-    if(*t == POW ){
+    if(**t == POW ){
         printf("POW ");
-        t++;
+        (*t)++;
         if(digitParse(t)){
             if(factorPostParse(t))
                 return 1;
@@ -299,39 +306,44 @@ int factorPostParse(Token_t *t){
     return 1;
 }
 
-int factorParse(Token_t *t){
+int factorParse(Token_t **t){
     printf("FACTOR\n");
-    if(*t == DIGIT || *t == FLOAT){
+    if(**t == DIGIT || **t == FLOAT){
         if(digitParse(t)){
             if(factorPostParse(t))
                 return 1;
         }
     }
-    else if(*t == SUBTRACT){
-        if(digitParse(++t)){
+    else if(**t == SUBTRACT){
+        (*t)++;
+        if(digitParse(t)){
             if(factorPostParse(t))
                 return 1;
         }
     }
-    else if(isTokenFunction(*t)){
-        printToken(*t);
-        if(*(++t) == LEFT_P)
+    else if(isTokenFunction(**t)){
+        printToken(**t);
+        (*t)++;
+        if(**t == LEFT_P)
         {
-            if(arithParse(++t)){
-                if(*(++t) == RIGHT_P){
+            (*t)++;
+            if(arithParse(t)){
+                if(**t == RIGHT_P){
                     printf("RIGHT_P");
-                    t++;
+                    (*t)++;
                     return 1;
                 }
             }
         }
     }
-    else if(*t == LEFT_P){
+    else if(**t == LEFT_P){
         printf("LEFT_P ");
-        if(arithParse(++t)){
-            if(*(++t) == RIGHT_P){
+        (*t)++;
+        if(arithParse(t)){
+            printToken(**t);
+            if(**t == RIGHT_P){
                 printf("RIGHT_P ");
-                t++;
+                (*t)++;
                 return 1;
             }
         }
@@ -340,11 +352,12 @@ int factorParse(Token_t *t){
     return 0;
     
 }
-int termPostParse(Token_t *t){
+int termPostParse(Token_t **t){
     printf("TERM POST\n");
-    if(*t == MULTIPLY || *t == DIVIDE){
-        printf(((*t == MULTIPLY) ? "MULTIPLY " : "DIVIDE "));
-        if(factorParse(++t)){
+    if(**t == MULTIPLY || **t == DIVIDE){
+        printf(((**t == MULTIPLY) ? "MULTIPLY " : "DIVIDE "));
+        (*t)++;
+        if(factorParse(t)){
             if(termPostParse(t))
                 return 1;
         }
@@ -353,21 +366,22 @@ int termPostParse(Token_t *t){
     return 1;
 }
 
-int termParse(Token_t *t){
+int termParse(Token_t **t){
     printf("TERM\n");
     if(factorParse(t)){
-        if(termPostParse(++t))
+        (*t)++;
+        if(termPostParse(t))
             return 1;
     }
     return 0;
 }
 
-int arithPostParse(Token_t *t){
+int arithPostParse(Token_t **t){
     printf("ARITH POST\n");
-    if(*t == SUBTRACT || *t == ADD){
-        printf(((*t == SUBTRACT) ? "SUBTRACT " : "ADD "));
-    
-        if(termParse(++t)){
+    if(**t == SUBTRACT || **t == ADD){
+        printf(((**t == SUBTRACT) ? "SUBTRACT " : "ADD "));
+        (*t)++;
+        if(termParse(t)){
             if(arithPostParse(t))
                 return 1;
         }
@@ -376,17 +390,18 @@ int arithPostParse(Token_t *t){
     return 1;
 }
 
-int arithParse(Token_t *t){
+int arithParse(Token_t **t){
     printf("ARITH\n");
     if(termParse(t)){
-       if(arithPostParse(++t))
+        (*t)++;
+        if(arithPostParse(t))
             return 1;
     }
     return 0;
 }
 
 int validate(Token_t *t, error* e){
-    if(arithParse(t))
+    if(arithParse(&t))
         return 1;
     *e = INVALID;
     return 0;
@@ -459,5 +474,7 @@ void printToken(Token_t t){
             printf("ERR ");
     }
 }
+
+
 
 #endif
