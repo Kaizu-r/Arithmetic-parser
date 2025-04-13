@@ -118,7 +118,7 @@ void toRPN(char* str, float* numbers, Token_t* queue, Token* t,  int* rear)   //
         queue[++(*rear)] = stack[top--]; //pop remaining operators into queue
 }
 
-float solve(float* numbers, Token_t* queue, int rear)
+int solve(float* res, float* numbers, Token_t* queue, int rear, error *e)
 {
 
     float stack[100];
@@ -140,12 +140,20 @@ float solve(float* numbers, Token_t* queue, int rear)
                     stack[top - 1]= stack[top - 1] - stack[top];    //store sum of two nums to top - 1
                     break;
                 case DIVIDE:
+                    if(stack[top] == 0){
+                        *e = UNDEFINED;
+                        return 1;
+                    }
                     stack[top - 1]= stack[top - 1] / stack[top];    //store sum of two nums to top - 1
                     break;
                 case MULTIPLY:
                     stack[top - 1]= stack[top - 1] * stack[top];    //store sum of two nums to top - 1
                     break;
                 case MOD:
+                    if(stack[top] == 0){
+                        *e = UNDEFINED;
+                        return 1;
+                    }
                     stack[top - 1] =(int) stack[top-1] % (int) stack[top];
                     break;
                 case POW:
@@ -170,6 +178,10 @@ float solve(float* numbers, Token_t* queue, int rear)
                     stack[top] = 1/tan(stack[top]);
                     break;
                 case LOG:
+                    if(stack[top] == 0){
+                        *e = OUT_OF_FUNCTION_SCOPE;
+                        return 1;
+                    }
                     stack[top] = log(stack[top]);
                     break;
                 case FLR:
@@ -178,16 +190,14 @@ float solve(float* numbers, Token_t* queue, int rear)
                 case CEI:
                     stack[top] = ceil(stack[top]);
                     break;
-                
-
-                    
             }
             top--;
         }
         i++;
     }
 
-    return stack[0];
+    *res = stack[0];
+    return 0;
 }
 
 
