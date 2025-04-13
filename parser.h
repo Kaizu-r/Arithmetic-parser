@@ -369,7 +369,6 @@ int termPostParse(Token_t **t){
 int termParse(Token_t **t){
     printf("TERM\n");
     if(factorParse(t)){
-        (*t)++;
         if(termPostParse(t))
             return 1;
     }
@@ -393,7 +392,6 @@ int arithPostParse(Token_t **t){
 int arithParse(Token_t **t){
     printf("ARITH\n");
     if(termParse(t)){
-        (*t)++;
         if(arithPostParse(t))
             return 1;
     }
@@ -475,6 +473,67 @@ void printToken(Token_t t){
     }
 }
 
+void printNonDigitToken(Token_t t){
+    switch(t)
+    {
+        case ADD:
+            printf("+ ");
+            break;
+        case SUBTRACT:
+            printf("- ");
+            break;
+        case MULTIPLY:
+            printf("* ");
+            break;
+        case DIVIDE:
+            printf("/ ");
+            break;
+        case POW:
+            printf("^ ");
+            break;
+        case MOD:
+            printf("%% ");
+            break;
+        case LEFT_P:
+            printf("( ");
+            break;
+        case RIGHT_P:
+            printf(") ");
+            break;
+        case SIN:
+            printf("sin ");
+            break;
+        case COS:
+            printf("cos ");
+            break;
+        case CSC:
+            printf("csc ");
+            break;
+        case TAN:
+            printf("tan ");
+            break;
+        case SEC:
+            printf("sec ");
+            break;
+        case COT:
+            printf("cot ");
+            break;
+        case LOG:
+            printf("log ");
+            break;
+        case FLR:
+            printf("flr ");
+            break;
+        case CEI:
+            printf("cei ");
+            break;
+        case END:
+            printf("end ");
+            break;
+        default:
+            printf("ERR ");
+    }
+}
 
 
 #endif
